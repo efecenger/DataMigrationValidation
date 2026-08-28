@@ -1,63 +1,63 @@
 # Data Migration & Validation
 
-Bozuk, eksik ve mükerrer müşteri/sipariş kayıtlarını temizleyerek yeni SQL Server şemasına güvenli biçimde taşıyan .NET uygulamasıdır.
+A .NET application that safely migrates corrupted, incomplete, inconsistent, and duplicate customer and order records into a clean SQL Server schema.
 
-## Özellikler
+## Features
 
-- Telefon, e-posta, kimlik, tutar, tarih ve yabancı anahtar validasyonu
-- Metin, telefon, e-posta ve kimlik numarası temizleme
-- TC kimlik veya e-posta + ad soyad kuralıyla deduplication
-- Kurtarılamayan kayıtlar için `Failed_Records` karantina tablosu
-- Transaction, hata simülasyonu ve rollback
-- Kaynak, hedef ve karantina kayıtları için mutabakat kontrolü
-- Keyset pagination kullanan yapılandırılabilir batch/chunk akışı
-- Sınırlı paralellik kullanan migration worker havuzu
-- 100.000 kayıtlık otomatik SQL Server yük ve rollback testi
+- Validation of phone numbers, email addresses, identity numbers, monetary amounts, dates, and foreign-key references
+- Normalization of text, phone numbers, email addresses, and identity numbers
+- Customer deduplication by national identity number or email address plus full name
+- A `Failed_Records` quarantine table for records that cannot be repaired automatically
+- Transactional execution, simulated critical failures, and rollback support
+- Reconciliation of source, target, and quarantined record counts
+- Configurable batch processing with keyset pagination
+- A bounded parallel migration worker pool
+- An automated SQL Server load and rollback test covering 100,000 source records
 
-## Gereksinimler
+## Requirements
 
 - .NET 10 SDK
 - SQL Server Express (`.\SQLEXPRESS`)
-- İsteğe bağlı olarak `make`
+- `make` (optional)
 
-Uygulama örnek kaynak ve hedef veritabanlarını `EnsureCreated` ile oluşturur.
+The application creates its sample source and target databases through `EnsureCreated`.
 
-## Çalıştırma
+## Running the migration
 
 ```powershell
 make run
 ```
 
-veya:
+Alternatively:
 
 ```powershell
 dotnet run --project DataMigrationValidation.Console -- --batch-size=500 --workers=4
 ```
 
-## Rollback testi
+## Testing rollback
 
 ```powershell
 make rollback
 ```
 
-Beklenen durum:
+Expected status:
 
 ```text
 Status: RolledBack
 Error: Simulated critical migration failure.
 ```
 
-## Büyük veri testi
+## Running the large-data test
 
 ```powershell
 make load-test
 ```
 
-Test 20.000 müşteri ve 80.000 sipariş üretir; normal migration, mutabakat ve rollback sonuçlarını doğrular. Benzersiz adlarla oluşturduğu geçici test veritabanlarını tamamlandığında otomatik olarak siler.
+The test generates 20,000 customers and 80,000 orders, then verifies the normal migration, persisted reconciliation counts, and rollback behavior. It uses uniquely named temporary databases and deletes them automatically after completion.
 
-## Proje yapısı
+## Project structure
 
-- `DataMigrationValidation.Core`: Entity, temizleme, validasyon, deduplication ve rapor modelleri
-- `DataMigrationValidation.Infrastructure`: EF Core context'leri, migration pipeline ve worker altyapısı
-- `DataMigrationValidation.Console`: Uygulama giriş noktası
-- `DataMigrationValidation.LoadTests`: Büyük veri entegrasyon/yük testi
+- `DataMigrationValidation.Core`: Entities, cleaning, validation, deduplication, and report models
+- `DataMigrationValidation.Infrastructure`: EF Core contexts, migration pipeline, and worker infrastructure
+- `DataMigrationValidation.Console`: Application entry point
+- `DataMigrationValidation.LoadTests`: Large-data integration and load test
