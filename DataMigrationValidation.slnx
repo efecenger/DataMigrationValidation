@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="DataMigrationValidation.Console/DataMigrationValidation.Console.csproj" />
+  <Project Path="DataMigrationValidation.Core/DataMigrationValidation.Core.csproj" />
+  <Project Path="DataMigrationValidation.Infrastructure/DataMigrationValidation.Infrastructure.csproj" />
+  <Project Path="DataMigrationValidation.LoadTests/DataMigrationValidation.LoadTests.csproj" />
+</Solution>
